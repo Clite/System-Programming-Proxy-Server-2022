@@ -87,7 +87,7 @@ void v(int semid)
 char* getHomeDir(char* home)
 {
   struct passwd *usr_info = getpwuid(getuid());
-  strcpy(home,usr_info->pw_dir);
+  strcpy(home, usr_info->pw_dir);
 
   return home;
 }
@@ -108,15 +108,15 @@ char* sha1_hash(char* input_url, char* hashed_url)
   char hashed_hex[41];
   int i;
 
-  SHA1((unsigned char*)input_url,strlen(input_url),hashed_160bits); // hash
+  SHA1((unsigned char*)input_url, strlen(input_url), hashed_160bits); // hash
   
   // SHA1 함수의 결과 각 byte는 bit단위의 결과가 저장되므로 0x00~0xff의 data가 있을 수 있음
   // 이를 순수히 16진수로 나타내기 위해 두 바이트에 0x00~0xff의 값을 들어가게 함
-  for(i=0;i<sizeof(hashed_160bits);i++)
+  for(i = 0; i < sizeof(hashed_160bits); i++)
     sprintf(hashed_hex + i*2, "%02x", hashed_160bits[i]);
   
   // copy hashed hexa url
-  strcpy(hashed_url,hashed_hex);
+  strcpy(hashed_url, hashed_hex);
   return hashed_url;
 }
 
@@ -169,11 +169,11 @@ void* LOG(void* msg)
 
     // Make a log directory & file with all permissions
     getHomeDir(home);
-    strcpy(temp,home);
-    mkdir(strcat(temp,"/logfile/"),0777);
-    strcat(temp,"logfile.txt");
-    FILE* log = fopen(temp,"a");
-    chmod(temp,0777);
+    strcpy(temp, home);
+    mkdir(strcat(temp, "/logfile/"), 0777);
+    strcat(temp, "logfile.txt");
+    FILE* log = fopen(temp, "a");
+    chmod(temp, 0777);
 
     fprintf(log, "%s", (char*)msg);
     fflush(log);
@@ -200,7 +200,7 @@ static void int_handler()
         char msg[300] = "";
         
         // Records server run time and number of processes(# of request) in log file and terminate
-	    // Use Semaphore & thread
+	// Use Semaphore & thread
         sprintf(msg, "**SERVER** [Terminated] run time: %ld sec. #sub process: %d\n", time(NULL) - start, sub);
         if(therr = pthread_create(&tid, NULL, LOG, (void*)msg))
         {
@@ -317,9 +317,9 @@ int main()
                 // Make a cache directory
                 getHomeDir(home);
                 strcpy(temp,home);
-                mkdir(strcat(temp,"/cache"),all);
+                mkdir(strcat(temp, "/cache"), all);
 
-                sha1_hash(input_url,hashed_url);    // Get hashed url
+                sha1_hash(input_url, hashed_url);    // Get hashed url
 		        /*
                 // For debug
                 printf("input url : %s, hashed url : %s\n", input_url, hashed_url);
@@ -327,10 +327,10 @@ int main()
                 */
 
                 // Make a cache's child directory using hashed url
-                strcpy(temp,home);
-                strcat(temp,"/cache/");
-                strncat(temp,hashed_url,3);
-                if(mkdir(temp,all) == -1) // Directory is already exist?
+                strcpy(temp, home);
+                strcat(temp, "/cache/");
+                strncat(temp, hashed_url, 3);
+                if(mkdir(temp, all) == -1) // Directory is already exist?
                 {
                     // If then, there is a possibility it will be 'Hit'
                     DIR* dir = opendir(temp);
@@ -338,22 +338,22 @@ int main()
                     
                     // File(URL) is already exist?
                     while(dp = readdir(dir))
-                        if(!strcmp(dp->d_name,hashed_url+3))
+                        if(!strcmp(dp->d_name, hashed_url+3))
                             break;
 
                     if(dp)  // update the log : Hit
                     {
                         // logfile에 기록 후 Process를 종료
-                        strncpy(tok,hashed_url,3);
+                        strncpy(tok, hashed_url, 3);
                         tok[3] = 0;                        // "tok\0"
 
                         // Get broken-down time & formatted time string
                         tcheck = time(NULL);
                         bd_time = localtime(&tcheck);
-                        strftime(tmstr,sizeof(tmstr),"%Y/%m/%d, %X",bd_time);
+                        strftime(tmstr, sizeof(tmstr), "%Y/%m/%d, %X", bd_time);
 
 			// Document on log(use semaphore & thread)
-                        sprintf(log,"[HIT]%s/%s-[%s]\n[HIT]%s\n",tok,hashed_url+3,tmstr,input_url);
+                        sprintf(log, "[HIT]%s/%s-[%s]\n[HIT]%s\n", tok, hashed_url+3, tmstr, input_url);
                         if(therr = pthread_create(&tid, NULL, LOG, (void*)log))
                         {
                             printf("pthread_create() ERROR\n");
@@ -362,10 +362,10 @@ int main()
                         pthread_detach(tid);
 
                         // Hashed URL is already exist! -> 'Hit' : write cache contents to browser
-                        strcat(temp,"/");
-                        strcat(temp,dp->d_name);
-                        for(cache = fopen(temp,"r"); (cache_len = fread(temp,sizeof(char),sizeof(temp),cache)) > 0; memset(serverbuf,EOF,sizeof(serverbuf)))
-                            write(client_fd,temp,cache_len);
+                        strcat(temp, "/");
+                        strcat(temp, dp->d_name);
+                        for(cache = fopen(temp,"r"); (cache_len = fread(temp,sizeof(char),sizeof(temp),cache)) > 0; memset(serverbuf, EOF, sizeof(serverbuf)))
+                            write(client_fd, temp, cache_len);
                         fclose(cache);
 
                         // socket clear
@@ -378,10 +378,10 @@ int main()
                 // Get broken-down time & formatted time string
                 tcheck = time(NULL);
                 bd_time = localtime(&tcheck);
-                strftime(tmstr,sizeof(tmstr),"%Y/%m/%d, %X",bd_time);
+                strftime(tmstr, sizeof(tmstr), "%Y/%m/%d, %X", bd_time);
                 
 		// Document on log(use semaphore & thread)
-                sprintf(log,"[MISS]%s-[%s]\n",input_url,tmstr);
+                sprintf(log, "[MISS]%s-[%s]\n", input_url, tmstr);
                 if(therr = pthread_create(&tid, NULL, LOG, (void*)log))
                 {
                     printf("pthread_create() ERROR\n");
@@ -416,10 +416,10 @@ int main()
                 }
                 
                 // make a directory & cache file
-                strcat(temp,"/");
-                strcat(temp,hashed_url+3);
-                cache = fopen(temp,"w");
-                chmod(temp,all);
+                strcat(temp, "/");
+                strcat(temp, hashed_url+3);
+                cache = fopen(temp, "w");
+                chmod(temp, all);
 
                 if(write(web_fd, buf, client_len) > 0)  // Send request msg to web server
                 {
