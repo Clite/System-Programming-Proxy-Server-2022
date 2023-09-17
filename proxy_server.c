@@ -25,18 +25,15 @@
 #define HTTPPORT 80             // Port no. for web server connection(HTTP)
 
 ///////////////////////////////////////////////////////////////////////
-// File Name : server.c
-// Date : 2022/06/06
-// Os : Ubuntu 16.04.1
-// Author : Oh sang soo
-// Student ID : 2017202045
+// File Name : proxy_server.c
+// Os : Ubuntu 16.04.5
+// Author : Clite
 // -----------------------------------------------------------------
-// Title : System Programming Assignment #3-1 (proxy server)
 // Description : Networking with web browser client & web server
 //               When host name of browser request is HIT, send response msg in cache file
 //               If not, get response msg from web server
-//		         In this assignment, use semaphore
-//	        	 for just one process can access the log file
+//		 In this assignment, use semaphore
+//	         for just one process can access the log file
 //               And use thread for parallelism
 ///////////////////////////////////////////////////////////////////////
 
